@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
+using Middleware.Middleware;
 namespace Middleware
 {
     public class Startup
@@ -37,6 +37,11 @@ namespace Middleware
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
+                .AddDefaultHeaders().AddCustomHeader("X-My-Custom-Header", "Use for more details")
+                );
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -48,6 +53,7 @@ namespace Middleware
             }
 
             app.UseStaticFiles();
+
 
             app.UseMvc(routes =>
             {
